@@ -19,7 +19,7 @@ DELETE /delUser/:id -> deletes 1 user by specifying id
 */
 
 
-const dbData = require('./dbModules/queries');
+const dbData = require('./middlewares/queries');
 const express = require('express');
 const cors = require('cors');
 const port = 5555;
@@ -62,6 +62,14 @@ app.get('/users/:id', (req, res) => {
         res.json(data);
     })
 })
+
+
+app.get('/vat', (req, res) => {
+    dbData.vat((err, data) => {
+        if (err) throw err;
+        res.json(data);
+    })
+})
 app.post('/addUser', (req, res) => {
     dbData.addUser(req.body, (err, data) => {
         if (err) throw err;
@@ -82,8 +90,37 @@ app.delete('/delUser/:id', (req, res) => {
         res.json({ "deleted": "ok" })
     })
 })
+
 app.get('/products', (req, res) => {
     dbData.productList((err, data) => {
+        if (err) throw err;
+        res.json(data);
+    })
+})
+
+app.get('/productsPC', (req, res) => {
+    dbData.productListPC((err, data) => {
+        if (err) throw err;
+        res.json(data);
+    })
+})
+
+app.get('/productsNET', (req, res) => {
+    dbData.productListNET((err, data) => {
+        if (err) throw err;
+        res.json(data);
+    })
+})
+
+app.get('/productsPeri', (req, res) => {
+    dbData.productListPeri((err, data) => {
+        if (err) throw err;
+        res.json(data);
+    })
+})
+
+app.get('/productsCables', (req, res) => {
+    dbData.productListCable((err, data) => {
         if (err) throw err;
         res.json(data);
     })

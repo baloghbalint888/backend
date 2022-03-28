@@ -1,13 +1,5 @@
-const mysql = require('mysql');
-const config = require('./config.json')
-const bcrypt = require("bcrypt");
-const connection = mysql.createConnection({
-    host: config.host,
-    port: config.port,
-    database: config.db,
-    user: config.user,
-    password: config.password
-});
+const hash = require("./hash");
+const connection = require("./connection")
 
 //bruttó árgenerátor szenvedés
 /* function vat(){
@@ -20,6 +12,19 @@ const connection = mysql.createConnection({
 
 }
  */
+
+module.exports.vat = function (callback) {
+    myQuery = `SELECT vat_percentage FROM vat`;
+    connection.query(myQuery, (err, result, fields) => {
+        if (err)
+            callback(err, null);
+        else {
+            callback(null, JSON.parse(JSON.stringify(result)));
+        }
+    })
+}
+
+
 module.exports.adminList = function (callback) {
     myQuery = `SELECT name, login FROM admin`;
     connection.query(myQuery, (err, result, fields) => {
@@ -54,8 +59,7 @@ module.exports.user = function (id, callback) {
 }
 
 module.exports.addUser = function (data, callback) {
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPW = bcrypt.hashSync(data.password, salt)
+    const hashedPW = hash(data.password);
     myQuery = `INSERT INTO users (login,password,name,phone,birth,email,billing_address,shipping_address) VALUES ('${data.login}','${hashedPW}','${data.name}','${data.phone}','${data.birth}','${data.email}','${data.billing_address}','${data.shipping_address}')`;
     connection.query(myQuery, (err, result, fields) => {
         if (err)
@@ -87,8 +91,51 @@ module.exports.delUserName = function (login, callback) {
         }
     })
 }
+
 module.exports.productList = function (callback) {
     myQuery = `SELECT name,description,picture,net_value FROM distribution`;
+    connection.query(myQuery, (err, result, fields) => {
+        if (err)
+            callback(err, null);
+        else {
+            callback(null, JSON.parse(JSON.stringify(result)));
+        }
+    })
+}
+module.exports.productListPC = function (callback) {
+    myQuery = `SELECT name,description,picture,net_value FROM distribution WHERE catID=1 OR catid=2`;
+    connection.query(myQuery, (err, result, fields) => {
+        if (err)
+            callback(err, null);
+        else {
+            callback(null, JSON.parse(JSON.stringify(result)));
+        }
+    })
+}
+
+module.exports.productListNET = function (callback) {
+    myQuery = `SELECT name,description,picture,net_value FROM distribution WHERE catID=3`;
+    connection.query(myQuery, (err, result, fields) => {
+        if (err)
+            callback(err, null);
+        else {
+            callback(null, JSON.parse(JSON.stringify(result)));
+        }
+    })
+}
+module.exports.productListPeri = function (callback) {
+    myQuery = `SELECT name,description,picture,net_value FROM distribution WHERE catID=4`;
+    connection.query(myQuery, (err, result, fields) => {
+        if (err)
+            callback(err, null);
+        else {
+            callback(null, JSON.parse(JSON.stringify(result)));
+        }
+    })
+}
+
+module.exports.productListCable = function (callback) {
+    myQuery = `SELECT name,description,picture,net_value FROM distribution WHERE catID=5`;
     connection.query(myQuery, (err, result, fields) => {
         if (err)
             callback(err, null);
