@@ -1,17 +1,5 @@
 const hash = require("./hash");
-const connection = require("./connection")
-
-//bruttó árgenerátor szenvedés
-/* function vat(){
-    myQuery = `SELECT vat_percentage FROM vat`;
-    connection.query(myQuery,(err,result,fields)=>{
-        const data = JSON.parse(JSON.stringify(result))
-        let percentage = data[0].vat_percentage;
-        return percentage;
-    })
-
-}
- */
+const connection = require("../services/connection")
 
 module.exports.vat = function (callback) {
     myQuery = `SELECT vat_percentage FROM vat`;
@@ -35,7 +23,26 @@ module.exports.adminList = function (callback) {
         }
     })
 }
-
+module.exports.admin = function (id,callback) {
+    myQuery = `SELECT name, login FROM admin WHERE id=${id}`;
+    connection.query(myQuery, (err, result, fields) => {
+        if (err)
+            callback(err, null);
+        else {
+            callback(null, JSON.parse(JSON.stringify(result)));
+        }
+    })
+}
+module.exports.search = function (data,callback) {
+    myQuery = `SELECT name,description,picture,net_value FROM distribution WHERE name LIKE '%${data}%' OR description LIKE '%${data}%'`;
+    connection.query(myQuery, (err, result, fields) => {
+        if (err)
+            callback(err, null);
+        else {
+            callback(null, JSON.parse(JSON.stringify(result)));
+        }
+    })
+}
 module.exports.userList = function (callback) {
     myQuery = `SELECT login, name, email FROM USERS`;
     connection.query(myQuery, (err, result, fields) => {
@@ -60,10 +67,10 @@ module.exports.user = function (id, callback) {
 
 module.exports.addUser = function (data, callback) {
     const hashedPW = hash(data.password);
-    myQuery = `INSERT INTO users (login,password,name,phone,birth,email,billing_address,shipping_address) VALUES ('${data.login}','${hashedPW}','${data.name}','${data.phone}','${data.birth}','${data.email}','${data.billing_address}','${data.shipping_address}')`;
+    myQuery = `INSERT INTO users (login,password,name,phone,birth,email,billing_address,shipping_address,tax_reg) VALUES ('${data.login}','${hashedPW}','${data.name}','${data.phone}','${data.birth}','${data.email}','${data.billing_address}','${data.shipping_address}','${data.tax_reg}')`;
     connection.query(myQuery, (err, result, fields) => {
-        if (err)
-            callback(err, null);
+        if(err)
+            callback(err.sqlMessage,null);
         else {
             callback(null, JSON.parse(JSON.stringify(result)));
         }
@@ -93,7 +100,7 @@ module.exports.delUserName = function (login, callback) {
 }
 
 module.exports.productList = function (callback) {
-    myQuery = `SELECT name,description,picture,net_value FROM distribution`;
+    myQuery = `SELECT name,description,picture,net_value, catID FROM distribution`;
     connection.query(myQuery, (err, result, fields) => {
         if (err)
             callback(err, null);
