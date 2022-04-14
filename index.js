@@ -1,14 +1,7 @@
-
-
-
-
-
-
 const express = require('express');
 const cors = require('cors');
 const port = 5555;
 const bodyParser = require('body-parser');
-
 
 const app = express();
 const options = {

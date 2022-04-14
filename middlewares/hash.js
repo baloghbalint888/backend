@@ -1,3 +1,5 @@
+
+
 const bcrypt = require("bcrypt")
 
 function hash(data){
