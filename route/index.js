@@ -8,7 +8,7 @@ GET /services/:id -> get one service by specifying a paramater (id)
 GET /categories/ -> list of all services
 GET /categories/:id -> get one service by specifying a paramater (id)
 GET /admin/ -> list of all admins
-POST /addUser -> adds a user from a recieved JSON object
+POST /users-> adds a user from a recieved JSON object
 POST /addProduct -> adds a product from a recieved JSON object
 
 DELETE /delUser -> deletes 1 user by specifying login name from the request body
