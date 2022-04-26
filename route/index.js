@@ -16,36 +16,29 @@ DELETE /delUser/:id -> deletes 1 user by specifying id
 
 */
 const path = require('path');
-
-
 function addRoutes(app){
 
     app.get('/admin', admins());
-
-
     app.get('/admin/:id', admin()); // admin only
-
     app.get('/users',  userList()) ;
     app.get('/users/:id', user());
     app.put('/users', user());
     app.delete('/user', user());
     app.delete('/user/:id', user());
     
+    app.post('/login', login());
     
-    app.get('/vat', (req, res) => {
+/*     app.get('/vat', (req, res) => {
         dbData.vat((err, data) => {
             if (err) throw err;
             res.json(data);
         })
-    })
+    }) */
 
     app.get('/search', search());
     app.get('/search/:key', search());
     app.get('/products', products());
-    app.get('/products/PC', products());
-    app.get('/products/cables', products());
-    app.get('/products/peripherals', products());
-    app.get('/products/routers', products());
+    app.get('/products/:key', products());
     app.get('/products/:id', product());
     app.put("/product", addProduct()); // admin only
     app.get('/services', services());
@@ -58,5 +51,5 @@ function addRoutes(app){
 
 const {userList,user,products,product,search,admins,services,categories} = require('../middlewares/userMWs/userMW');
 const {addProduct,admin} = require('../middlewares/adminMWs/adminMW');
-
+const {login} = require('../middlewares/userMWs/userAuth');
 module.exports = addRoutes;

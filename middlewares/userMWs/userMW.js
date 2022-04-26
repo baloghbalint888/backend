@@ -12,34 +12,35 @@ module.exports.userList = () => {
 
 module.exports.user = () => {
     return (req, res, next) => {
-        if(req.method === "PUT"){
-            dbData.addUser(req.body,(err,data)=>{
-                if(err){
-                    res.json({"status" : "failed"})
+        console.log(req.method)
+        if (req.method === 'PUT') {
+            dbData.addUser(req.body, (err, data) => {
+                if (err) {
+                    res.json({ "status": "failed" })
                 }
-                else res.json({"status" : "ok"});
+                else res.json({ "status": "ok" });
             })
         }
-        if(req.method === "DELETE"){
-            if(req.params.id){
-                dbData.delUser(req.params.id,(err, data)=>{
-                    if(err){
-                        res.json({"status": "failed"});
+        else if (req.method === "DELETE") {
+            if (req.params.id) {
+                dbData.delUser(req.params.id, (err, data) => {
+                    if (err) {
+                        res.json({ "status": "failed" });
                     }
-                    else res.json({"status" : "ok"})
+                    else res.json({ "status": "ok" })
                 })
             }
-            else{
+            else {
                 dbData.delUserName(req.body.login, (err, data) => {
                     if (err) {
-                        res.json({"status" : "failed"})
+                        res.json({ "status": "failed" })
                     }
                     else res.json({ "status": "ok" })
                 })
             }
 
         }
-        else{
+        else {
             dbData.user(req.params.id, (err, data) => {
                 if (err) throw err;
                 console.log(`új ${req.method} kérés a /user/${req.params.id} felé`);
@@ -52,39 +53,39 @@ module.exports.user = () => {
 
 module.exports.products = () => {
     return (req, res, next) => {
-
-        if (req.params.id == "pc") {
-            dbData.productListPC((err, data) => {
-                if (err) throw err;
-                console.log(`új ${req.method} kérés a /products/PC felé`);
-                res.json(data);
-            })
-        }
-        if (req.params.id == "cables") {
-            dbData.productListCable((err, data) => {
-                if (err) throw err;
-                console.log(`új ${req.method} kérés a /products/cables felé`);
-                res.json(data);
-            })
-        }
-        if (req.params.id == "routers") {
-            dbData.productListNET((err, data) => {
-                if (err) throw err;
-                console.log(`új ${req.method} kérés a /products/routers felé`);
-                res.json(data);
-            })
-        }
-        if (req.params.id == "peripherals") {
-            dbData.productListPeri((err, data) => {
-                if (err) throw err;
-                console.log(`új ${req.method} kérés a /products/peripherals felé`);
-                res.json(data);
-            })
+        if (req.params.key) {
+            if (req.params.key === "pc") {
+                dbData.productListPC((err, data) => {
+                    if (err) throw err;
+                    console.log(`új ${req.method} kérés a /products/PC felé`);
+                    res.json(data);
+                })
+            }
+            if (req.params.key == "cables") {
+                dbData.productListCable((err, data) => {
+                    if (err) throw err;
+                    console.log(`új ${req.method} kérés a /products/cables felé`);
+                    res.json(data);
+                })
+            }
+            if (req.params.key == "routers") {
+                dbData.productListNET((err, data) => {
+                    if (err) throw err;
+                    console.log(`új ${req.method} kérés a /products/routers felé`);
+                    res.json(data);
+                })
+            }
+            if (req.params.key == "peripherals") {
+                dbData.productListPeri((err, data) => {
+                    if (err) throw err;
+                    console.log(`új ${req.method} kérés a /products/peripherals felé`);
+                    res.json(data);
+                })
+            }
         }
         else {
             dbData.productList((err, data) => {
                 if (err) throw err;
-                
                 console.log(`új ${req.method} kérés a /products felé`);
                 res.json(data);
             })
@@ -136,18 +137,18 @@ module.exports.categories = () => {
     }
 }
 
-module.exports.services = () =>{
+module.exports.services = () => {
     return (req, res, next) => {
-        if(req.params.id){
-            dbData.service(req.params.id,(err,data)=>{
-                if(err) throw err;
+        if (req.params.id) {
+            dbData.service(req.params.id, (err, data) => {
+                if (err) throw err;
                 console.log(`új ${req.method} kérés a /services/${req.params.id} felé`);
                 res.json(data);
             })
         }
-        else{
-            dbData.serviceList((err, data)=>{
-                if(err) throw err;
+        else {
+            dbData.serviceList((err, data) => {
+                if (err) throw err;
                 console.log(`új ${req.method} kérés a /services felé`);
                 res.json(data);
             })
@@ -155,15 +156,15 @@ module.exports.services = () =>{
     }
 }
 
-module.exports.categories = () =>{
+module.exports.categories = () => {
     return (req, res, next) => {
-        if(req.params.id){
+        if (req.params.id) {
             dbData.category(req.params.id, (err, data) => {
                 if (err) throw err;
                 res.json(data);
             })
         }
-        else{
+        else {
             dbData.categoryList((err, data) => {
                 if (err) throw err;
                 res.json(data);
@@ -172,12 +173,12 @@ module.exports.categories = () =>{
     }
 }
 
-module.exports.admins = () =>{
-    return (req,res,next)=>{
-        dbData.adminList((err,data)=>{
-        if(err) throw err;
-        console.log(`új ${req.method} kérés a /admin felé`)
-        res.json(data);
+module.exports.admins = () => {
+    return (req, res, next) => {
+        dbData.adminList((err, data) => {
+            if (err) throw err;
+            console.log(`új ${req.method} kérés a /admin felé`)
+            res.json(data);
         })
     }
 }
