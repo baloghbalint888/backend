@@ -38,7 +38,7 @@ module.exports.search = function (data, callback) {
   });
 };
 module.exports.userList = function (callback) {
-  myQuery = `SELECT login, name, email FROM USERS`;
+  myQuery = `SELECT userID, login, password, name, phone, birth, email, billing_address, shipping_address, tax_reg FROM USERS`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
