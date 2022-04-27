@@ -15,7 +15,8 @@ DELETE /delUser -> deletes 1 user by specifying login name from the request body
 DELETE /delUser/:id -> deletes 1 user by specifying id
 
 */
-const path = require('path');
+
+
 function addRoutes(app){
 
     app.get('/admin', admins());
@@ -50,6 +51,6 @@ function addRoutes(app){
 
 
 const {userList,user,products,product,search,admins,services,categories} = require('../middlewares/userMWs/userMW');
-const {addProduct,admin} = require('../middlewares/adminMWs/adminMW');
+const {addProduct,admin,uploadImg} = require('../middlewares/adminMWs/adminMW');
 const {login} = require('../middlewares/userMWs/userAuth');
 module.exports = addRoutes;

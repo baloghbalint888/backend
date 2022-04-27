@@ -197,18 +197,19 @@ module.exports.category = function (id, callback) {
 };
 // itt tartok
 module.exports.findUser = function (data, callback) {
-  myQuery = `SELECT login,password FROM users WHERE login = '${data.login}';`;
+  myQuery = `SELECT login,password,userID FROM users WHERE login = '${data.login}';`;
 
   connection.query(myQuery, (err, result, fields) => {
+    const userID = result[0].userID;
     if (err) callback(err, { status: "failed" });
     if(!result[0]){
-       callback (err,{ status: "Not found in DB" })
+       callback (err, false )
     }
     else {
       if (!compareSync(data.password, result[0].password)) {
-        callback(err, { status: "failed" });
+        callback(err, false);
       } else {
-        callback(null, { status: "ok" });
+        callback(null, {id : userID});
       }
     }
   });

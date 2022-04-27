@@ -12,7 +12,6 @@ module.exports.userList = () => {
 
 module.exports.user = () => {
     return (req, res, next) => {
-        console.log(req.method)
         if (req.method === 'PUT') {
             dbData.addUser(req.body, (err, data) => {
                 if (err) {
@@ -31,6 +30,8 @@ module.exports.user = () => {
                 })
             }
             else {
+                console.log('törlés login alapján')
+                console.log(req.body.login)
                 dbData.delUserName(req.body.login, (err, data) => {
                     if (err) {
                         res.json({ "status": "failed" })
