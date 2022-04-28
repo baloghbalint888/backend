@@ -145,8 +145,8 @@ module.exports.product = function (id, callback) {
   });
 };
 
-module.exports.addProduct = function (data, callback) {
-  myQuery = `INSERT INTO distribution (catID,name,amount, picture,description,vat_id,net_value) VALUES (${data.catID},'${data.name}','${data.amount}','${data.picture}','${data.description}',${data.vat_id},${data.net_value})`;
+module.exports.addProduct = function (file,body, callback) {
+  myQuery = `INSERT INTO distribution (catID,name, picture,description,vat_id,net_value) VALUES (${body.catID},'${body.name}','${file.originalname}','${body.description}',${body.vat_id},${body.net_value})`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -222,3 +222,48 @@ module.exports.findUser = function (data, callback) {
     }
   });
 };
+
+
+
+module.exports.cart = function (id,callback){
+  myQuery = `SELECT users.login, distribution.name, distribution.net_value, cart.prod_amount FROM users LEFT JOIN cart ON users.userID = cart.userID LEFT JOIN distribution ON cart.productID = distribution.productID WHERE cart.userID = ${id}`
+  connection.query(myQuery, (err, result, fields) => {
+    if (err){ 
+      callback(err, {"status" : "failed"});
+    }
+    else {
+      callback(null, JSON.parse(JSON.stringify(result)));
+    }
+  });
+}
+
+
+module.exports.addToCart = function (data,callback){
+  console.log(data.serviceID)
+  var myQuery = `INSERT INTO cart (userID,productID,serviceID,prod_amount,date) VALUES(${data.userID},${data.productID},${data.serviceID},${data.prod_amount},'${data.date})`
+  if(data.serviceID == 'undefined'){
+    myQuery = `INSERT INTO cart (userID,productID,prod_amount,date) VALUES(${data.userID},${data.productID},${data.prod_amount},'${data.date}')`;
+  }
+
+  console.log(myQuery)
+  connection.query(myQuery, (err, result, fields) => {
+    if (err){ 
+      callback(err, {"status" : "failed"});
+    }
+    else {
+      callback(null, {"status" : "ok"});
+    }
+  });
+}
+
+module.exports.deleteFromCart = function (data,callback){
+  myQuery = `DELETE FROM cart WHERE userID = ${data.userID} AND productID = ${data.productID}`
+  connection.query(myQuery, (err, result, fields) => {
+    if (err){ 
+      callback(err, {"status" : "failed"});
+    }
+    else {
+      callback(null, {"status" : "ok"});
+    }
+  });
+}

@@ -1,5 +1,3 @@
-const req = require('express/lib/request');
-const res = require('express/lib/response');
 const dbData = require('../../middlewares/queries');
 
 module.exports.userList = () => {
@@ -17,33 +15,39 @@ module.exports.user = () => {
         if (req.method === 'PUT') {
             dbData.addUser(req.body, (err, data) => {
                 if (err) {
-                    res.json({ "status": "failed" })
-                }
-                else res.json({ "status": "ok" });
+                    res.json({
+                        "status": "failed"
+                    })
+                } else res.json({
+                    "status": "ok"
+                });
             })
-        }
-        else if (req.method === "DELETE") {
+        } else if (req.method === "DELETE") {
             if (req.params.id) {
                 dbData.delUser(req.params.id, (err, data) => {
                     if (err) {
-                        res.json({ "status": "failed" });
-                    }
-                    else res.json({ "status": "ok" })
+                        res.json({
+                            "status": "failed"
+                        });
+                    } else res.json({
+                        "status": "ok"
+                    })
                 })
-            }
-            else {
+            } else {
                 console.log('törlés login alapján')
-                console.log(req.body.login)
+                console.log(req.body)
                 dbData.delUserName(req.body.login, (err, data) => {
                     if (err) {
-                        res.json({ "status": "failed" })
-                    }
-                    else res.json({ "status": "ok" })
+                        res.json({
+                            "status": "failed"
+                        })
+                    } else res.json({
+                        "status": "ok"
+                    })
                 })
             }
 
-        }
-        else {
+        } else {
             dbData.user(req.params.id, (err, data) => {
                 if (err) throw err;
                 console.log(`új ${req.method} kérés a /user/${req.params.id} felé`);
@@ -85,8 +89,7 @@ module.exports.products = () => {
                     res.json(data);
                 })
             }
-        }
-        else {
+        } else {
             dbData.productList((err, data) => {
                 if (err) throw err;
                 console.log(`új ${req.method} kérés a /products felé`);
@@ -111,8 +114,7 @@ module.exports.search = () => {
     return (req, res, next) => {
         if (!req.params.key) {
             res.redirect('/products')
-        }
-        else {
+        } else {
             dbData.search(req.params.key, (err, data) => {
                 if (err) throw err;
                 console.log(`új ${req.method} kérés a /search/${req.params.key} felé`);
@@ -129,8 +131,7 @@ module.exports.categories = () => {
                 if (err) throw err;
                 res.json(data);
             }
-        }
-        else {
+        } else {
             dbData.categoryList((err, data) => {
                 if (err) throw err;
                 console.log(`új ${req.method} kérés a /categories felé`);
@@ -142,14 +143,16 @@ module.exports.categories = () => {
 
 
 
-module.exports.vat = () =>{
-    return (req,res)=>{
-        dbData.vat((err,data)=>{
+module.exports.vat = () => {
+    return (req, res) => {
+        dbData.vat((err, data) => {
             const num = data[0].vat_percentage
-            const numString = '1' +'.'+ num.toString()
+            const numString = '1' + '.' + num.toString()
             const szam = parseFloat(numString)
-            if(err) throw err;
-            res.json({"vat" : szam})
+            if (err) throw err;
+            res.json({
+                "vat": szam
+            })
         })
     }
 }
@@ -161,9 +164,7 @@ module.exports.services = () => {
                 console.log(`új ${req.method} kérés a /services/${req.params.id} felé`);
                 res.json(data);
             })
-        }
-        
-        else {
+        } else {
             dbData.serviceList((err, data) => {
                 if (err) throw err;
                 console.log(`új ${req.method} kérés a /services felé`);
@@ -183,8 +184,7 @@ module.exports.categories = () => {
                 if (err) throw err;
                 res.json(data);
             })
-        }
-        else {
+        } else {
             dbData.categoryList((err, data) => {
                 if (err) throw err;
                 res.json(data);
@@ -200,5 +200,48 @@ module.exports.admins = () => {
             console.log(`új ${req.method} kérés a /admin felé`)
             res.json(data);
         })
+    }
+}
+
+
+module.exports.cart = () => {
+    return (req, res, next) => {
+        if (!req.params.id) {
+            if (req.method === 'PUT') {
+                dbData.addToCart(req.body, (err, data) => {
+                    if (err) {
+                        res.json({
+                            "status": "failed"
+                        })
+                    } else {
+                        res.send({
+                            "status": "ok"
+                        });
+                    }
+                })
+            }
+            if (req.method === 'DELETE') {
+                dbData.deleteFromCart(req.body, (err, data) => {
+                    if (err) {
+                        res.json({
+                            "status": "failed"
+                        })
+                    } else {
+                        res.json({
+                            "status": "ok"
+                        })
+                    }
+                })
+            }
+        } else {
+            dbData.cart(req.params.id, (err, data) => {
+                if (err) {
+                    res.json({"status": "Not found in DB"})
+                } else {
+                    res.json(data);
+                }
+            })
+        }
+
     }
 }
