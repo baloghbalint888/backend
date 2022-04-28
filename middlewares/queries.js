@@ -9,7 +9,6 @@ module.exports.vat = function (callback) {
     }
   });
 };
-
 module.exports.adminList = function (callback) {
   myQuery = `SELECT name, login FROM admin`;
   connection.query(myQuery, (err, result, fields) => {
@@ -176,7 +175,7 @@ module.exports.service = function (id, callback) {
   });
 };
 module.exports.servicesVat = function (id, callback) {
-  myQuery = `SELECT vat_percentage FROM vat INNER JOIN services ON services.vat_id=vat.vat_id WHERE serviceID=1`;
+  myQuery = `SELECT vat_percentage FROM vat INNER JOIN services ON services.vat_id=vat.vat_id WHERE serviceID=${id}`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {

@@ -1,3 +1,5 @@
+const req = require('express/lib/request');
+const res = require('express/lib/response');
 const dbData = require('../../middlewares/queries');
 
 module.exports.userList = () => {
@@ -138,6 +140,19 @@ module.exports.categories = () => {
     }
 }
 
+
+
+module.exports.vat = () =>{
+    return (req,res)=>{
+        dbData.vat((err,data)=>{
+            const num = data[0].vat_percentage
+            const numString = '1' +'.'+ num.toString()
+            const szam = parseFloat(numString)
+            if(err) throw err;
+            res.json({"vat" : szam})
+        })
+    }
+}
 module.exports.services = () => {
     return (req, res, next) => {
         if (req.params.id) {

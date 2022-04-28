@@ -29,16 +29,11 @@ function addRoutes(app){
     
     app.post('/login', login());
     
-/*     app.get('/vat', (req, res) => {
-        dbData.vat((err, data) => {
-            if (err) throw err;
-            res.json(data);
-        })
-    }) */
+    app.get('/vat', vat());
 
     app.get('/search', search());
     app.get('/search/:key', search());
-    app.get('/products', products());
+    app.get('/products',products());
     app.get('/products/:key', products());
     app.get('/products/:id', product());
     app.put("/product", addProduct()); // admin only
@@ -50,7 +45,7 @@ function addRoutes(app){
 
 
 
-const {userList,user,products,product,search,admins,services,categories} = require('../middlewares/userMWs/userMW');
+const {userList,user,products,product,search,admins,services,categories,vat} = require('../middlewares/userMWs/userMW');
 const {addProduct,admin,uploadImg} = require('../middlewares/adminMWs/adminMW');
 const {login} = require('../middlewares/userMWs/userAuth');
 module.exports = addRoutes;
