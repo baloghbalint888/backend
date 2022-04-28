@@ -205,10 +205,12 @@ module.exports.category = function (id, callback) {
 };
 // itt tartok
 module.exports.findUser = function (data, callback) {
-  myQuery = `SELECT login,password,userID FROM users WHERE login = '${data.login}';`;
+  myQuery = `SELECT login,password,userID,is_admin FROM users WHERE login = '${data.login}';`;
 
   connection.query(myQuery, (err, result, fields) => {
     const userID = result[0].userID;
+    const isAdmin = result[0].is_admin;
+    console.table(result);
     if (err) callback(err, { status: "failed" });
     if(!result[0]){
        callback (err, false )
@@ -217,7 +219,7 @@ module.exports.findUser = function (data, callback) {
       if (!compareSync(data.password, result[0].password)) {
         callback(err, false);
       } else {
-        callback(null, {id : userID});
+        callback(null, {id : userID, isAdmin : isAdmin});
       }
     }
   });
@@ -225,8 +227,9 @@ module.exports.findUser = function (data, callback) {
 
 
 
-module.exports.cart = function (id,callback){
-  myQuery = `SELECT users.login, distribution.name, distribution.net_value, cart.prod_amount FROM users LEFT JOIN cart ON users.userID = cart.userID LEFT JOIN distribution ON cart.productID = distribution.productID WHERE cart.userID = ${id}`
+module.exports.cart = function (body,callback){
+
+  myQuery = `SELECT distribution.productID, distribution.picture,distribution.name, distribution.net_value, cart.prod_amount FROM users LEFT JOIN cart ON users.userID = cart.userID LEFT JOIN distribution ON cart.productID = distribution.productID WHERE cart.userID =${body.id}`
   connection.query(myQuery, (err, result, fields) => {
     if (err){ 
       callback(err, {"status" : "failed"});

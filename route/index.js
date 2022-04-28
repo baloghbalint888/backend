@@ -41,11 +41,10 @@ const upload = multer({
     app.put('/users', user());
     app.delete('/user', user());
     app.delete('/user/:id', user());
-    
     app.post('/login', login());
-    
     app.get('/vat', vat());
     app.get('/cart/:id', cart());
+    app.post('/cart', cart());
     app.put('/cart', cart());
     app.delete('/cart', cart());
     app.get('/search', search());
