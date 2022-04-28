@@ -147,6 +147,7 @@ module.exports.services = () => {
                 res.json(data);
             })
         }
+        
         else {
             dbData.serviceList((err, data) => {
                 if (err) throw err;
@@ -156,6 +157,9 @@ module.exports.services = () => {
         }
     }
 }
+
+
+
 
 module.exports.categories = () => {
     return (req, res, next) => {

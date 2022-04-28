@@ -175,6 +175,15 @@ module.exports.service = function (id, callback) {
     }
   });
 };
+module.exports.servicesVat = function (id, callback) {
+  myQuery = `SELECT vat_percentage FROM vat INNER JOIN services ON services.vat_id=vat.vat_id WHERE serviceID=1`;
+  connection.query(myQuery, (err, result, fields) => {
+    if (err) callback(err, null);
+    else {
+      callback(null, JSON.parse(JSON.stringify(result)));
+    }
+  });
+};
 
 module.exports.categoryList = function (callback) {
   myQuery = `SELECT * FROM categories`;
