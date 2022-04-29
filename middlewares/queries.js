@@ -67,6 +67,31 @@ module.exports.addUser = function (data, callback) {
   });
 };
 
+module.exports.updateUser = function (data, callback) {
+  const {id,updateData} = data;
+  if(update.name)
+  
+  console.log(id)
+  console.log(updateData.name)
+  myQuery = `UPDATE users
+  SET name ='${updateData.name}' , 
+  phone=${updateData.phone}, 
+  birth=${updateData.birth}, 
+  email=${updateData.email}, 
+  billing_address=${updateData.billing_address}, 
+  billing_address=${updateData.shipping_address}, 
+  tax_reg=${updateData.tax_reg}
+   WHERE userID = ${id}`;
+  connection.query(myQuery, (err, result, fields) => {
+    console.log(result)
+    if (err) callback(err, { status: "failed"});
+    else {
+      callback(null, {status : "ok"});
+    }
+  });
+};
+
+
 module.exports.delUser = function (id, callback) {
   myQuery = `DELETE FROM users WHERE userID = ${id}`;
   connection.query(myQuery, (err, result, fields) => {
@@ -88,7 +113,7 @@ module.exports.delUserName = function (login, callback) {
 };
 
 module.exports.productList = function (callback) {
-  myQuery = `SELECT name,description,picture,net_value, catID FROM distribution`;
+  myQuery = `SELECT productID,name,description,picture,net_value, catID FROM distribution`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -97,7 +122,7 @@ module.exports.productList = function (callback) {
   });
 };
 module.exports.productListPC = function (callback) {
-  myQuery = `SELECT name,description,picture,net_value FROM distribution WHERE catID=1 OR catid=2`;
+  myQuery = `SELECT productID,name,description,picture,net_value FROM distribution WHERE catID=1 OR catid=2`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -107,7 +132,7 @@ module.exports.productListPC = function (callback) {
 };
 
 module.exports.productListNET = function (callback) {
-  myQuery = `SELECT name,description,picture,net_value FROM distribution WHERE catID=3`;
+  myQuery = `SELECT productID,name,description,picture,net_value FROM distribution WHERE catID=3`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -116,7 +141,7 @@ module.exports.productListNET = function (callback) {
   });
 };
 module.exports.productListPeri = function (callback) {
-  myQuery = `SELECT name,description,picture,net_value FROM distribution WHERE catID=4`;
+  myQuery = `SELECT productID,name,description,picture,net_value FROM distribution WHERE catID=4`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -126,7 +151,7 @@ module.exports.productListPeri = function (callback) {
 };
 
 module.exports.productListCable = function (callback) {
-  myQuery = `SELECT name,description,picture,net_value FROM distribution WHERE catID=5`;
+  myQuery = `SELECT productID,name,description,picture,net_value FROM distribution WHERE catID=5`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -136,7 +161,7 @@ module.exports.productListCable = function (callback) {
 };
 
 module.exports.product = function (id, callback) {
-  myQuery = `SELECT name,picture,net_value FROM distribution WHERE productID = ${id}`;
+  myQuery = `SELECT productID,name,picture,net_value FROM distribution WHERE productID = ${id}`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {

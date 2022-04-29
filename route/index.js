@@ -39,6 +39,7 @@ const upload = multer({
     app.get('/users',  userList()) ;
     app.get('/users/:id', user());
     app.put('/users', user());
+    app.patch('/user', user());
     app.delete('/user', user());
     app.delete('/user/:id', user());
     app.post('/login', login());

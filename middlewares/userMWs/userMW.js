@@ -47,7 +47,17 @@ module.exports.user = () => {
             });
         });
       }
-    } else {
+    } else if(req.method ==='PATCH'){
+        dbData.updateUser(req.body,(err)=>{
+        if(err){
+          res.json({status: "failed"})}
+        else{
+          res.json({status : "ok"})
+        }
+      })
+    }
+    
+    else {
       dbData.user(req.params.id, (err, data) => {
         if (err) throw err;
         console.log(`új ${req.method} kérés a /user/${req.params.id} felé`);
@@ -198,39 +208,45 @@ module.exports.admins = () => {
 };
 
 module.exports.cart = () => {
-    
   return (req, res, next) => {
-
-    if (req.method === "POST"){
-        dbData.cart(req.body, (err, data) => {
-            if (err) {
-              res.json({ status: "Not found in DB" });
-            } else {
-              res.json(data);
-            }
+    if (req.method === "POST") {
+      dbData.cart(req.body, (err, data) => {
+        if (err) {
+          res.json({
+            status: "Not found in DB",
           });
-      }
+        } else {
+          res.json(data);
+        }
+      });
+    }
 
     if (req.method === "PUT") {
-        dbData.addToCart(req.body, (err, data) => {
-            if (err) {
-                res.json({status: "failed"});
-            } else {
-                res.send({status: "ok"});
-          }
-        });
-      }
+      dbData.addToCart(req.body, (err, data) => {
+        if (err) {
+          res.json({
+            status: "failed",
+          });
+        } else {
+          res.send({
+            status: "ok",
+          });
+        }
+      });
+    }
 
     if (req.method === "DELETE") {
-        dbData.deleteFromCart(req.body, (err, data) => {
-            if (err) {
-                res.json({status: "failed"});
-            } else {
-                res.json({status: "ok"});
-          }
-        });
-      }
-
-
+      dbData.deleteFromCart(req.body, (err, data) => {
+        if (err) {
+          res.json({
+            status: "failed",
+          });
+        } else {
+          res.json({
+            status: "ok",
+          });
+        }
+      });
+    }
   };
 };
