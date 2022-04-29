@@ -1,4 +1,7 @@
 const dbData = require("../../middlewares/queries");
+
+
+//adott admin adatai
 module.exports.admin = () => {
   return (req, res, next) => {
     dbData.admin((err, data) => {
@@ -8,6 +11,7 @@ module.exports.admin = () => {
   };
 };
 
+//termék hozzáadása
 module.exports.addProduct = () => {
   return (req, res, next) => {
     console.log(req.file)

@@ -1,20 +1,6 @@
-/*
-GET /users -> list of all users 
-GET /users/:id -> get one user by specifying a parameter (id)
-GET /products -> list of all products
-GET /products/:id -> get one product by specifying a parameter (id)
-GET /services/ -> list of all services
-GET /services/:id -> get one service by specifying a paramater (id)
-GET /categories/ -> list of all services
-GET /categories/:id -> get one service by specifying a paramater (id)
-GET /admin/ -> list of all admins
-POST /users-> adds a user from a recieved JSON object
-POST /addProduct -> adds a product from a recieved JSON object
-
-DELETE /delUser -> deletes 1 user by specifying login name from the request body
-DELETE /delUser/:id -> deletes 1 user by specifying id
-
-*/
+/**
+ * 
+ */
 
 const multer = require('multer')
 function addRoutes(app){
@@ -34,10 +20,10 @@ const upload = multer({
     storage: storage
 })
 
-    app.get('/admin', admins());
+    app.get('/admin', admins()); //
     app.get('/admin/:id', admin()); // admin only
-    app.get('/users',  userList()) ;
-    app.get('/users/:id', user());
+    app.get('/users',  userList()) ; //
+    app.get('/users/:id', user()); //
     app.put('/users', user());
     app.patch('/user', user());
     app.delete('/user', user());
@@ -53,7 +39,9 @@ const upload = multer({
     app.get('/products',products());
     app.get('/products/:key', products());
     app.get('/products/:id', product());
+    app.delete('/product', product())
     app.put("/product", upload.single('uploaded_file'),addProduct()); // admin only
+   // app.patch('/product', updateProduct())
     app.get('/services', services());
     app.get('/services/:id', services());
     app.get('/categories', categories());

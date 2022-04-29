@@ -1,5 +1,7 @@
 const { hashSync, compareSync} = require("bcryptjs");
 const connection = require("../services/connection");
+
+
 module.exports.vat = function (callback) {
   myQuery = `SELECT vat_percentage FROM vat`;
   connection.query(myQuery, (err, result, fields) => {
@@ -57,7 +59,7 @@ module.exports.user = function (id, callback) {
 };
 
 module.exports.addUser = function (data, callback) {
-  const hashedPW = hashSync(data.password, 10);
+  const hashedPW = hashSync(data.password, 10); // 'hasheli'/titkosítja a tárolandó jelszót
   myQuery = `INSERT INTO users (login,password,name,phone,birth,email,billing_address,shipping_address,tax_reg) VALUES ('${data.login}','${hashedPW}','${data.name}','${data.phone}','${data.birth}','${data.email}','${data.billing_address}','${data.shipping_address}','${data.tax_reg}')`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err.sqlMessage, null);
@@ -69,7 +71,6 @@ module.exports.addUser = function (data, callback) {
 
 module.exports.updateUser = function (data, callback) {
   const {id,updateData} = data;
-  if(update.name)
 
   console.log(id)
   console.log(updateData.name)
@@ -180,6 +181,17 @@ module.exports.addProduct = function (file,body, callback) {
   });
 };
 
+module.exports.deleteProduct = function (data, callback) {
+  myQuery = `DELETE FROM distribution WHERE name='${data.name}'`
+  connection.query(myQuery, (err, result, fields) => {
+    if (err) callback(err, null);
+    else {
+      callback(null, JSON.parse(JSON.stringify(result)));
+    }
+  });
+};
+
+
 module.exports.serviceList = function (callback) {
   myQuery = `SELECT * FROM services`;
   connection.query(myQuery, (err, result, fields) => {
@@ -241,7 +253,7 @@ module.exports.findUser = function (data, callback) {
        callback (err, false )
     }
     else {
-      if (!compareSync(data.password, result[0].password)) {
+      if (!compareSync(data.password, result[0].password)) { //Összeveti a login által bejövő inputot az adatbázissal, az alapján válaszol
         callback(err, false);
       } else {
         callback(null, {id : userID, isAdmin : isAdmin});

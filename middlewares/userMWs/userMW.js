@@ -1,5 +1,8 @@
 const dbData = require("../../middlewares/queries");
 
+
+
+//felhasználók lekérdezése
 module.exports.userList = () => {
   return (req, res, next) => {
     dbData.userList((err, data) => {
@@ -10,6 +13,14 @@ module.exports.userList = () => {
   };
 };
 
+
+/*
+ Ha a request method: 
+ -PUT, hozzáad egy usert a DB-hez
+ -DELETE, töröl egy usert
+ -PATCH, módosít egy usert
+ - Különben header param alapján visszadob 1 adott usert
+ */
 module.exports.user = () => {
   return (req, res, next) => {
     if (req.method === "PUT") {
@@ -67,6 +78,12 @@ module.exports.user = () => {
   };
 };
 
+
+/*
+Ha van header param:
+- 'param' esetén a csak a 'param' kategóriájú termékeket kérdezi le 
+Különben az összes termék lekérdezése
+ */
 module.exports.products = () => {
   return (req, res, next) => {
     if (req.params.key) {
@@ -108,16 +125,35 @@ module.exports.products = () => {
   };
 };
 
+
+
+/*
+Ha a request method:
+  GET - header param alapján egy termék adatait kérdezi le
+  DELETE - név alapján egy terméket töröl
+ */
 module.exports.product = () => {
   return (req, res, next) => {
-    dbData.product(req.params.id, (err, data) => {
-      if (err) throw err;
-      console.log(`új ${req.method} kérés a /products/${req.params.id} felé`);
-      res.json(data);
-    });
+    if(req.method ==='GET'){
+      dbData.product(req.params.id, (err, data) => {
+        if (err) throw err;
+        console.log(`új ${req.method} kérés a /products/${req.params.id} felé`);
+        res.json(data);
+      });
+    }
+    if(req.method ==='DELETE'){
+      dbData.deleteProduct(req.body,(err, data)=>{
+        if(err){
+          res.json({status:"failed"})
+        }
+        res.json({status: "ok"});
+      })
+    }
   };
 };
 
+
+//Ha van header param, akkor azt használja kulcsszónak, különben átirányít az összes termék listázására
 module.exports.search = () => {
   return (req, res, next) => {
     if (!req.params.key) {
@@ -132,6 +168,8 @@ module.exports.search = () => {
   };
 };
 
+
+//Ha van header param, akkor adott ID-vel rendelkező kategóra adatai, különben az összes kategória a válasz
 module.exports.categories = () => {
   return (req, res, next) => {
     if (req.params.id) {
@@ -150,6 +188,8 @@ module.exports.categories = () => {
   };
 };
 
+
+//Áfa %-ot kérdez le, és alakít át (a bruttó számítás logikája a front-end-en)
 module.exports.vat = () => {
   return (req, res) => {
     dbData.vat((err, data) => {
@@ -163,6 +203,8 @@ module.exports.vat = () => {
     });
   };
 };
+
+//Ha van header param, akkor ID szerint szolgáltatás, különben az összes
 module.exports.services = () => {
   return (req, res, next) => {
     if (req.params.id) {
@@ -181,22 +223,8 @@ module.exports.services = () => {
   };
 };
 
-module.exports.categories = () => {
-  return (req, res, next) => {
-    if (req.params.id) {
-      dbData.category(req.params.id, (err, data) => {
-        if (err) throw err;
-        res.json(data);
-      });
-    } else {
-      dbData.categoryList((err, data) => {
-        if (err) throw err;
-        res.json(data);
-      });
-    }
-  };
-};
 
+//adminok listája
 module.exports.admins = () => {
   return (req, res, next) => {
     dbData.adminList((err, data) => {
@@ -207,6 +235,13 @@ module.exports.admins = () => {
   };
 };
 
+
+
+/*
+POST - egy felhasználóhoz tartozó termékeket adja vissza
+PUT - hozzáad egy terméket a kosárhoz
+DELETE - töröl egy terméket a kosárból
+*/
 module.exports.cart = () => {
   return (req, res, next) => {
     if (req.method === "POST") {
