@@ -70,7 +70,7 @@ module.exports.addUser = function (data, callback) {
 module.exports.updateUser = function (data, callback) {
   const {id,updateData} = data;
   if(update.name)
-  
+
   console.log(id)
   console.log(updateData.name)
   myQuery = `UPDATE users
