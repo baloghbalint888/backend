@@ -1,6 +1,5 @@
-const { hashSync, compareSync} = require("bcryptjs");
+const { hashSync, compareSync } = require("bcryptjs");
 const connection = require("../services/connection");
-
 
 module.exports.vat = function (callback) {
   myQuery = `SELECT vat_percentage FROM vat`;
@@ -39,7 +38,7 @@ module.exports.search = function (data, callback) {
   });
 };
 module.exports.userList = function (callback) {
-  myQuery = `SELECT userID, login, password, name, phone, birth, email, billing_address, shipping_address, tax_reg FROM USERS`;
+  myQuery = `SELECT userID, login, name, phone, birth, email, billing_address, shipping_address, tax_reg FROM USERS`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -70,28 +69,32 @@ module.exports.addUser = function (data, callback) {
 };
 
 module.exports.updateUser = function (data, callback) {
-  const {id,updateData} = data;
+  const { id, updateData } = data;
 
-  console.log(id)
-  console.log(updateData.name)
+  console.log(data)
   myQuery = `UPDATE users
-  SET name ='${updateData.name}' , 
-  phone=${updateData.phone}, 
-  birth=${updateData.birth}, 
-  email=${updateData.email}, 
-  billing_address=${updateData.billing_address}, 
-  billing_address=${updateData.shipping_address}, 
-  tax_reg=${updateData.tax_reg}
-   WHERE userID = ${id}`;
+  SET ${updateData.name ? `name='${updateData.name}', ` : ''}
+  
+  ${updateData.phone ? `phone='${updateData.phone}',` : ''} 
+
+  ${updateData.birth ? `birth='${updateData.birth}',` : ''} 
+  ${updateData.email ? `email='${updateData.email}',` : ''} 
+  ${updateData.billing_address ? `billing_address='${updateData.billing_address}',` : ''} 
+  ${updateData.shipping_address ? `shipping_address='${updateData.shipping_address}',` : ''} 
+  ${updateData.tax_reg ? `tax_reg='${updateData.tax_reg}',` : ''}
+  `
+
+ myQuery = myQuery.replace(/,([^,]*)$/,` WHERE userID = ${id}`)
+
+   console.log(myQuery)
   connection.query(myQuery, (err, result, fields) => {
-    console.log(result)
-    if (err) callback(err, { status: "failed"});
+    console.log(result);
+    if (err) callback(err, { status: "failed" });
     else {
-      callback(null, {status : "ok"});
+      callback(null, { status: "ok" });
     }
   });
 };
-
 
 module.exports.delUser = function (id, callback) {
   myQuery = `DELETE FROM users WHERE userID = ${id}`;
@@ -171,7 +174,7 @@ module.exports.product = function (id, callback) {
   });
 };
 
-module.exports.addProduct = function (file,body, callback) {
+module.exports.addProduct = function (file, body, callback) {
   myQuery = `INSERT INTO distribution (catID,name, picture,description,vat_id,net_value) VALUES (${body.catID},'${body.name}','${file.originalname}','${body.description}',${body.vat_id},${body.net_value})`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
@@ -182,7 +185,17 @@ module.exports.addProduct = function (file,body, callback) {
 };
 
 module.exports.deleteProduct = function (data, callback) {
-  myQuery = `DELETE FROM distribution WHERE name='${data.name}'`
+  myQuery = `DELETE FROM distribution WHERE name='${data.name}'`;
+  connection.query(myQuery, (err, result, fields) => {
+    if (err) callback(err, null);
+    else {
+      callback(null, JSON.parse(JSON.stringify(result)));
+    }
+  });
+};
+
+module.exports.updateProduct = function (data, callback) {
+  myQuery = `UPDATE distribution SET catID='${data.catID}', name='${data.name}', description='${data.description}', net_value='${data.net_value} WHERE productID = ${data.productID} `
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -249,61 +262,54 @@ module.exports.findUser = function (data, callback) {
     const isAdmin = result[0].is_admin;
     console.table(result);
     if (err) callback(err, { status: "failed" });
-    if(!result[0]){
-       callback (err, false )
-    }
-    else {
-      if (!compareSync(data.password, result[0].password)) { //Összeveti a login által bejövő inputot az adatbázissal, az alapján válaszol
+    if (!result[0]) {
+      callback(err, false);
+    } else {
+      if (!compareSync(data.password, result[0].password)) {
+        //Összeveti a login által bejövő inputot az adatbázissal, az alapján válaszol
         callback(err, false);
       } else {
-        callback(null, {id : userID, isAdmin : isAdmin});
+        callback(null, { id: userID, isAdmin: isAdmin });
       }
     }
   });
 };
 
-
-
-module.exports.cart = function (body,callback){
-
-  myQuery = `SELECT distribution.productID, distribution.picture,distribution.name, distribution.net_value, cart.prod_amount FROM users LEFT JOIN cart ON users.userID = cart.userID LEFT JOIN distribution ON cart.productID = distribution.productID WHERE cart.userID =${body.id}`
+module.exports.cart = function (body, callback) {
+  myQuery = `SELECT distribution.productID, distribution.picture,distribution.name, distribution.net_value, cart.prod_amount FROM users LEFT JOIN cart ON users.userID = cart.userID LEFT JOIN distribution ON cart.productID = distribution.productID WHERE cart.userID =${body.id}`;
   connection.query(myQuery, (err, result, fields) => {
-    if (err){ 
-      callback(err, {"status" : "failed"});
-    }
-    else {
+    if (err) {
+      callback(err, { status: "failed" });
+    } else {
       callback(null, JSON.parse(JSON.stringify(result)));
     }
   });
-}
+};
 
-
-module.exports.addToCart = function (data,callback){
-  console.log(data.serviceID)
-  var myQuery = `INSERT INTO cart (userID,productID,serviceID,prod_amount,date) VALUES(${data.userID},${data.productID},${data.serviceID},${data.prod_amount},'${data.date})`
-  if(data.serviceID == 'undefined'){
+module.exports.addToCart = function (data, callback) {
+  console.log(data.serviceID);
+  var myQuery = `INSERT INTO cart (userID,productID,serviceID,prod_amount,date) VALUES(${data.userID},${data.productID},${data.serviceID},${data.prod_amount},'${data.date})`;
+  if (data.serviceID == "undefined") {
     myQuery = `INSERT INTO cart (userID,productID,prod_amount,date) VALUES(${data.userID},${data.productID},${data.prod_amount},'${data.date}')`;
   }
 
-  console.log(myQuery)
+  console.log(myQuery);
   connection.query(myQuery, (err, result, fields) => {
-    if (err){ 
-      callback(err, {"status" : "failed"});
-    }
-    else {
-      callback(null, {"status" : "ok"});
+    if (err) {
+      callback(err, { status: "failed" });
+    } else {
+      callback(null, { status: "ok" });
     }
   });
-}
+};
 
-module.exports.deleteFromCart = function (data,callback){
-  myQuery = `DELETE FROM cart WHERE userID = ${data.userID} AND productID = ${data.productID}`
+module.exports.deleteFromCart = function (data, callback) {
+  myQuery = `DELETE FROM cart WHERE userID = ${data.userID} AND productID = ${data.productID}`;
   connection.query(myQuery, (err, result, fields) => {
-    if (err){ 
-      callback(err, {"status" : "failed"});
-    }
-    else {
-      callback(null, {"status" : "ok"});
+    if (err) {
+      callback(err, { status: "failed" });
+    } else {
+      callback(null, { status: "ok" });
     }
   });
-}
+};

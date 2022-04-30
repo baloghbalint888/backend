@@ -141,6 +141,15 @@ module.exports.product = () => {
         res.json(data);
       });
     }
+    if(req.method ==='PATCH'){
+      dbData.updateProduct(req.body,(err, data)=>{
+        if(err){
+          res.json({status:"failed"})
+        };
+        res.json({status: "ok"})
+
+      })
+    }
     if(req.method ==='DELETE'){
       dbData.deleteProduct(req.body,(err, data)=>{
         if(err){

@@ -41,7 +41,7 @@ const upload = multer({
     app.get('/products/:id', product());
     app.delete('/product', product())
     app.put("/product", upload.single('uploaded_file'),addProduct()); // admin only
-   // app.patch('/product', updateProduct())
+    app.patch('/product', product())
     app.get('/services', services());
     app.get('/services/:id', services());
     app.get('/categories', categories());
