@@ -7,7 +7,9 @@ module.exports.login = () => {
         const { login, password } = req.body;
         if (login && password) {
             dbData.findUser(req.body, (err, data) => {
-                if (err) throw err;
+                if (err){
+                    res.send({status: "failed"})
+                }
                 console.log(data);
                 if (data) {
                     res.send(data);
@@ -18,5 +20,6 @@ module.exports.login = () => {
                 }
             });
         }
+        else res.send({status:"failed"})
     };
 };

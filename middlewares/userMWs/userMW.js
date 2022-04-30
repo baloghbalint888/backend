@@ -1,5 +1,5 @@
 const dbData = require("../../middlewares/queries");
-
+const {vat} = require('./vatFormatter');
 
 
 //felhasználók lekérdezése
@@ -59,13 +59,18 @@ module.exports.user = () => {
         });
       }
     } else if(req.method ==='PATCH'){
+      if(req.body){
         dbData.updateUser(req.body,(err)=>{
-        if(err){
-          res.json({status: "failed"})}
-        else{
-          res.json({status : "ok"})
-        }
-      })
+          if(err){
+            res.json({status: "failed"})}
+          else{
+            res.json({status : "ok"})
+          }
+        })
+      }else{
+        res.json({status: "no body xd"})
+      }
+
     }
     
     else {
@@ -130,6 +135,7 @@ module.exports.products = () => {
 /*
 Ha a request method:
   GET - header param alapján egy termék adatait kérdezi le
+  PATCH - req.body elemei alapján frissít
   DELETE - név alapján egy terméket töröl
  */
 module.exports.product = () => {
@@ -138,6 +144,7 @@ module.exports.product = () => {
       dbData.product(req.params.id, (err, data) => {
         if (err) throw err;
         console.log(`új ${req.method} kérés a /products/${req.params.id} felé`);
+        console.log(data)
         res.json(data);
       });
     }
@@ -145,14 +152,18 @@ module.exports.product = () => {
       dbData.updateProduct(req.body,(err, data)=>{
         if(err){
           res.json({status:"failed"})
-        };
-        res.json({status: "ok"})
-
+        }else{
+          res.json({status: "ok"})
+        }
+      
       })
     }
     if(req.method ==='DELETE'){
+      console.log(req.body)
       dbData.deleteProduct(req.body,(err, data)=>{
+        
         if(err){
+      
           res.json({status:"failed"})
         }
         res.json({status: "ok"});
@@ -202,12 +213,10 @@ module.exports.categories = () => {
 module.exports.vat = () => {
   return (req, res) => {
     dbData.vat((err, data) => {
-      const num = data[0].vat_percentage;
-      const numString = "1" + "." + num.toString();
-      const szam = parseFloat(numString);
+      const num = vat(data[0].vat_percentage);
       if (err) throw err;
       res.json({
-        vat: szam,
+        vat: num,
       });
     });
   };

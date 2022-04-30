@@ -165,7 +165,7 @@ module.exports.productListCable = function (callback) {
 };
 
 module.exports.product = function (id, callback) {
-  myQuery = `SELECT productID,name,picture,net_value FROM distribution WHERE productID = ${id}`;
+  myQuery = `SELECT productID,name,picture,net_value,description,catID FROM distribution WHERE productID = ${id}`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -185,6 +185,7 @@ module.exports.addProduct = function (file, body, callback) {
 };
 
 module.exports.deleteProduct = function (data, callback) {
+
   myQuery = `DELETE FROM distribution WHERE name='${data.name}'`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
@@ -194,8 +195,10 @@ module.exports.deleteProduct = function (data, callback) {
   });
 };
 
-module.exports.updateProduct = function (data, callback) {
-  myQuery = `UPDATE distribution SET catID='${data.catID}', name='${data.name}', description='${data.description}', net_value='${data.net_value} WHERE productID = ${data.productID} `
+module.exports.updateProduct = function (body, callback) {
+  const {data} = body;
+  myQuery = `UPDATE distribution SET catID='${data.catID}', name='${data.name}', description='${data.description}', net_value='${data.net_value}' WHERE productID = ${data.productID} `
+  console.log(myQuery)
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -253,7 +256,7 @@ module.exports.category = function (id, callback) {
     }
   });
 };
-// itt tartok
+
 module.exports.findUser = function (data, callback) {
   myQuery = `SELECT login,password,userID,is_admin FROM users WHERE login = '${data.login}';`;
 
@@ -288,8 +291,8 @@ module.exports.cart = function (body, callback) {
 
 module.exports.addToCart = function (data, callback) {
   console.log(data.serviceID);
-  var myQuery = `INSERT INTO cart (userID,productID,serviceID,prod_amount,date) VALUES(${data.userID},${data.productID},${data.serviceID},${data.prod_amount},'${data.date})`;
-  if (data.serviceID == "undefined") {
+  let myQuery = `INSERT INTO cart (userID,productID,serviceID,prod_amount,date) VALUES(${data.userID},${data.productID},${data.serviceID},${data.prod_amount},'${data.date})`;
+  if (!data.serviceID) {
     myQuery = `INSERT INTO cart (userID,productID,prod_amount,date) VALUES(${data.userID},${data.productID},${data.prod_amount},'${data.date}')`;
   }
 
