@@ -1,18 +1,16 @@
 const dbData = require("../../middlewares/queries");
-const {vat} = require('./vatFormatter');
-
+const { vat } = require("./vatFormatter");
 
 //felhasználók lekérdezése
 module.exports.userList = () => {
   return (req, res, next) => {
     dbData.userList((err, data) => {
       if (err) throw err;
-      console.log(`Új ${req.method} kérés a /users felé`);
+
       res.json(data);
     });
   };
 };
-
 
 /*
  Ha a request method: 
@@ -58,31 +56,27 @@ module.exports.user = () => {
             });
         });
       }
-    } else if(req.method ==='PATCH'){
-      if(req.body){
-        dbData.updateUser(req.body,(err)=>{
-          if(err){
-            res.json({status: "failed"})}
-          else{
-            res.json({status : "ok"})
+    } else if (req.method === "PATCH") {
+      if (req.body) {
+        dbData.updateUser(req.body, (err) => {
+          if (err) {
+            res.json({ status: "failed" });
+          } else {
+            res.json({ status: "ok" });
           }
-        })
-      }else{
-        res.json({status: "no body xd"})
+        });
+      } else {
+        res.json({ status: "no body xd" });
       }
-
-    }
-    
-    else {
+    } else {
       dbData.user(req.params.id, (err, data) => {
         if (err) throw err;
-        console.log(`új ${req.method} kérés a /user/${req.params.id} felé`);
+
         res.json(data);
       });
     }
   };
 };
-
 
 /*
 Ha van header param:
@@ -95,42 +89,40 @@ module.exports.products = () => {
       if (req.params.key === "pc") {
         dbData.productListPC((err, data) => {
           if (err) throw err;
-          console.log(`új ${req.method} kérés a /products/PC felé`);
+
           res.json(data);
         });
       }
       if (req.params.key == "cables") {
         dbData.productListCable((err, data) => {
           if (err) throw err;
-          console.log(`új ${req.method} kérés a /products/cables felé`);
+
           res.json(data);
         });
       }
       if (req.params.key == "routers") {
         dbData.productListNET((err, data) => {
           if (err) throw err;
-          console.log(`új ${req.method} kérés a /products/routers felé`);
+
           res.json(data);
         });
       }
       if (req.params.key == "peripherals") {
         dbData.productListPeri((err, data) => {
           if (err) throw err;
-          console.log(`új ${req.method} kérés a /products/peripherals felé`);
+
           res.json(data);
         });
       }
     } else {
       dbData.productList((err, data) => {
         if (err) throw err;
-        console.log(`új ${req.method} kérés a /products felé`);
+
         res.json(data);
       });
     }
   };
 };
-
-
 
 /*
 Ha a request method:
@@ -140,40 +132,34 @@ Ha a request method:
  */
 module.exports.product = () => {
   return (req, res, next) => {
-    if(req.method ==='GET'){
+    if (req.method === "GET") {
       dbData.product(req.params.id, (err, data) => {
         if (err) throw err;
-        console.log(`új ${req.method} kérés a /products/${req.params.id} felé`);
-        console.log(data)
+
         res.json(data);
       });
     }
-    if(req.method ==='PATCH'){
-      dbData.updateProduct(req.body,(err, data)=>{
-        if(err){
-          res.json({status:"failed"})
-        }else{
-          res.json({status: "ok"})
+    if (req.method === "PATCH") {
+      dbData.updateProduct(req.body, (err, data) => {
+        if (err) {
+          res.json({ status: "failed" });
+        } else {
+          res.json({ status: "ok" });
         }
-      
-      })
+      });
     }
-    if(req.method ==='DELETE'){
-      console.log(req.body)
-      dbData.deleteProduct(req.body,(err, data)=>{
-        
-        if(err){
-      
-          res.json({status:"failed"})
+    if (req.method === "DELETE") {
+      dbData.deleteProduct(req.body, (err, data) => {
+        if (err) {
+          res.json({ status: "failed" });
         }
-        res.json({status: "ok"});
-      })
+        res.json({ status: "ok" });
+      });
     }
   };
 };
 
-
-//Ha van header param, akkor azt használja kulcsszónak, különben átirányít az összes termék listázására
+//Ha van header param, akkor azt használja kulcsszónak, különben átirányít  az összes termék listázásnak útvonalára
 module.exports.search = () => {
   return (req, res, next) => {
     if (!req.params.key) {
@@ -181,13 +167,12 @@ module.exports.search = () => {
     } else {
       dbData.search(req.params.key, (err, data) => {
         if (err) throw err;
-        console.log(`új ${req.method} kérés a /search/${req.params.key} felé`);
+
         res.json(data);
       });
     }
   };
 };
-
 
 //Ha van header param, akkor adott ID-vel rendelkező kategóra adatai, különben az összes kategória a válasz
 module.exports.categories = () => {
@@ -201,13 +186,12 @@ module.exports.categories = () => {
     } else {
       dbData.categoryList((err, data) => {
         if (err) throw err;
-        console.log(`új ${req.method} kérés a /categories felé`);
+
         res.json(data);
       });
     }
   };
 };
-
 
 //Áfa %-ot kérdez le, és alakít át (a bruttó számítás logikája a front-end-en)
 module.exports.vat = () => {
@@ -228,32 +212,29 @@ module.exports.services = () => {
     if (req.params.id) {
       dbData.service(req.params.id, (err, data) => {
         if (err) throw err;
-        console.log(`új ${req.method} kérés a /services/${req.params.id} felé`);
+
         res.json(data);
       });
     } else {
       dbData.serviceList((err, data) => {
         if (err) throw err;
-        console.log(`új ${req.method} kérés a /services felé`);
+
         res.json(data);
       });
     }
   };
 };
 
-
 //adminok listája
 module.exports.admins = () => {
   return (req, res, next) => {
     dbData.adminList((err, data) => {
       if (err) throw err;
-      console.log(`új ${req.method} kérés a /admin felé`);
+
       res.json(data);
     });
   };
 };
-
-
 
 /*
 POST - egy felhasználóhoz tartozó termékeket adja vissza

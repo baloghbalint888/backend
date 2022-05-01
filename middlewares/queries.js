@@ -71,24 +71,29 @@ module.exports.addUser = function (data, callback) {
 module.exports.updateUser = function (data, callback) {
   const { id, updateData } = data;
 
-  console.log(data)
   myQuery = `UPDATE users
-  SET ${updateData.name ? `name='${updateData.name}', ` : ''}
+  SET ${updateData.name ? `name='${updateData.name}', ` : ""}
   
-  ${updateData.phone ? `phone='${updateData.phone}',` : ''} 
+  ${updateData.phone ? `phone='${updateData.phone}',` : ""} 
 
-  ${updateData.birth ? `birth='${updateData.birth}',` : ''} 
-  ${updateData.email ? `email='${updateData.email}',` : ''} 
-  ${updateData.billing_address ? `billing_address='${updateData.billing_address}',` : ''} 
-  ${updateData.shipping_address ? `shipping_address='${updateData.shipping_address}',` : ''} 
-  ${updateData.tax_reg ? `tax_reg='${updateData.tax_reg}',` : ''}
-  `
+  ${updateData.birth ? `birth='${updateData.birth}',` : ""} 
+  ${updateData.email ? `email='${updateData.email}',` : ""} 
+  ${
+    updateData.billing_address
+      ? `billing_address='${updateData.billing_address}',`
+      : ""
+  } 
+  ${
+    updateData.shipping_address
+      ? `shipping_address='${updateData.shipping_address}',`
+      : ""
+  } 
+  ${updateData.tax_reg ? `tax_reg='${updateData.tax_reg}',` : ""}
+  `;
 
- myQuery = myQuery.replace(/,([^,]*)$/,` WHERE userID = ${id}`)
+  myQuery = myQuery.replace(/,([^,]*)$/, ` WHERE userID = ${id}`);
 
-   console.log(myQuery)
   connection.query(myQuery, (err, result, fields) => {
-    console.log(result);
     if (err) callback(err, { status: "failed" });
     else {
       callback(null, { status: "ok" });
@@ -185,7 +190,6 @@ module.exports.addProduct = function (file, body, callback) {
 };
 
 module.exports.deleteProduct = function (data, callback) {
-
   myQuery = `DELETE FROM distribution WHERE name='${data.name}'`;
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
@@ -196,9 +200,9 @@ module.exports.deleteProduct = function (data, callback) {
 };
 
 module.exports.updateProduct = function (body, callback) {
-  const {data} = body;
-  myQuery = `UPDATE distribution SET catID='${data.catID}', name='${data.name}', description='${data.description}', net_value='${data.net_value}' WHERE productID = ${data.productID} `
-  console.log(myQuery)
+  const { data } = body;
+  myQuery = `UPDATE distribution SET catID='${data.catID}', name='${data.name}', description='${data.description}', net_value='${data.net_value}' WHERE productID = ${data.productID} `;
+
   connection.query(myQuery, (err, result, fields) => {
     if (err) callback(err, null);
     else {
@@ -206,7 +210,6 @@ module.exports.updateProduct = function (body, callback) {
     }
   });
 };
-
 
 module.exports.serviceList = function (callback) {
   myQuery = `SELECT * FROM services`;
@@ -263,7 +266,7 @@ module.exports.findUser = function (data, callback) {
   connection.query(myQuery, (err, result, fields) => {
     const userID = result[0].userID;
     const isAdmin = result[0].is_admin;
-    console.table(result);
+
     if (err) callback(err, { status: "failed" });
     if (!result[0]) {
       callback(err, false);
@@ -290,24 +293,25 @@ module.exports.cart = function (body, callback) {
 };
 
 module.exports.addToCart = function (data, callback) {
-  const {userID,cart} = data;
-  console.log(data.userID);
-  console.log(data.cart)
-  for(let item of cart){
-    let myQuery = `INSERT INTO cart (userID,serviceID,prod_amount,date) VALUES(${userID},${item.serviceID},${item.quantity},'${new Date().toISOString().slice(0,10)}')`;
+  const { userID, cart } = data;
+
+  for (let item of cart) {
+    let myQuery = `INSERT INTO cart (userID,serviceID,prod_amount,date) VALUES(${userID},${
+      item.serviceID
+    },${item.quantity},'${new Date().toISOString().slice(0, 10)}')`;
     if (!item.service) {
-      myQuery = `INSERT INTO cart (userID,productID,prod_amount,date) VALUES(${userID},${item.productID},${item.quantity},'${new Date().toISOString().slice(0,10)}')`;
+      myQuery = `INSERT INTO cart (userID,productID,prod_amount,date) VALUES(${userID},${
+        item.productID
+      },${item.quantity},'${new Date().toISOString().slice(0, 10)}')`;
     }
-  
-    console.log(myQuery);
+
     connection.query(myQuery, (err, result, fields) => {
       if (err) {
         callback(err, { status: "failed" });
       }
     });
   }
-  callback(null, {status : "ok"})
-
+  callback(null, { status: "ok" });
 };
 
 module.exports.deleteFromCart = function (data, callback) {

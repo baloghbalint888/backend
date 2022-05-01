@@ -1,6 +1,5 @@
 const dbData = require("../../middlewares/queries");
 
-
 //adott admin adatai
 module.exports.admin = () => {
   return (req, res, next) => {
@@ -14,15 +13,12 @@ module.exports.admin = () => {
 //termék hozzáadása
 module.exports.addProduct = () => {
   return (req, res, next) => {
-    console.log(req.file)
-    dbData.addProduct(req.file,req.body, (err, data) => {
-      
-      if (err){
-        res.json({status: "failed"})
-      }else{
-        res.json({status: "ok"})
+    dbData.addProduct(req.file, req.body, (err, data) => {
+      if (err) {
+        res.json({ status: "failed" });
+      } else {
+        res.json({ status: "ok" });
       }
-      
     });
   };
 };
