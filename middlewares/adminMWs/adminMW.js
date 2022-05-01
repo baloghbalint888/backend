@@ -17,8 +17,12 @@ module.exports.addProduct = () => {
     console.log(req.file)
     dbData.addProduct(req.file,req.body, (err, data) => {
       
-      if (err) throw err;
-      res.json(req.body.uploaded_file);
+      if (err){
+        res.json({status: "failed"})
+      }else{
+        res.json({status: "ok"})
+      }
+      
     });
   };
 };

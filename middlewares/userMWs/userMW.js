@@ -281,7 +281,7 @@ module.exports.cart = () => {
             status: "failed",
           });
         } else {
-          res.send({
+          res.json({
             status: "ok",
           });
         }

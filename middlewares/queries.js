@@ -290,20 +290,24 @@ module.exports.cart = function (body, callback) {
 };
 
 module.exports.addToCart = function (data, callback) {
-  console.log(data.serviceID);
-  let myQuery = `INSERT INTO cart (userID,productID,serviceID,prod_amount,date) VALUES(${data.userID},${data.productID},${data.serviceID},${data.prod_amount},'${data.date})`;
-  if (!data.serviceID) {
-    myQuery = `INSERT INTO cart (userID,productID,prod_amount,date) VALUES(${data.userID},${data.productID},${data.prod_amount},'${data.date}')`;
-  }
-
-  console.log(myQuery);
-  connection.query(myQuery, (err, result, fields) => {
-    if (err) {
-      callback(err, { status: "failed" });
-    } else {
-      callback(null, { status: "ok" });
+  const {userID,cart} = data;
+  console.log(data.userID);
+  console.log(data.cart)
+  for(let item of cart){
+    let myQuery = `INSERT INTO cart (userID,serviceID,prod_amount,date) VALUES(${userID},${item.serviceID},${item.quantity},'${new Date().toISOString().slice(0,10)}')`;
+    if (!item.service) {
+      myQuery = `INSERT INTO cart (userID,productID,prod_amount,date) VALUES(${userID},${item.productID},${item.quantity},'${new Date().toISOString().slice(0,10)}')`;
     }
-  });
+  
+    console.log(myQuery);
+    connection.query(myQuery, (err, result, fields) => {
+      if (err) {
+        callback(err, { status: "failed" });
+      }
+    });
+  }
+  callback(null, {status : "ok"})
+
 };
 
 module.exports.deleteFromCart = function (data, callback) {
